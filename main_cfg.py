@@ -8,6 +8,7 @@ DEFAULTS = {
     'image_exts' : ['jpg', 'png', 'jpeg', 'bmp'],
     'model_path' : '/torch_model/',
     'model_name' : 'vgg16-torch.pth',
+    'save_model_name' : 'vgg16-trained.pth',
     'image_size' : 224,
     'rotation_prob' : 0.5,
     'shear_prob' : 0.5,
@@ -34,7 +35,8 @@ PARSER.add_argument('--mode', type=str, help='Specify the mode of usage. Either 
 PARSER.add_argument('--dataset_path', type=str, default=DEFAULTS['dataset_path'], help='Specify the relative path of the training data folder.')
 PARSER.add_argument('--image_exts', type=list, default=DEFAULTS['image_exts'], help='A list of accepted image extensions.')
 PARSER.add_argument('--model_path', type=str, default=DEFAULTS['model_path'], help='Specify the relative path of the model storing folder.')
-PARSER.add_argument('--model_name', type=str, default=DEFAULTS['model_name'], help='Specify the name of the model file to be saved or loaded.')
+PARSER.add_argument('--model_name', type=str, default=DEFAULTS['model_name'], help='Specify the name of the model file to be loaded.')
+PARSER.add_argument('--save_model_name', type=str, default=DEFAULTS['save_model_name'], help='Specify the name of the model file to be saved.')
 PARSER.add_argument('--image_size', type=int, default=DEFAULTS['image_size'], help='Specify the size of the training images to be resized.')
 PARSER.add_argument('--rotation_prob', type=int, default=DEFAULTS['rotation_prob'], help='Specify the probability to decide how likely a training image should be rotated. Set to 0 to disable.')
 PARSER.add_argument('--shear_prob', type=float, default=DEFAULTS['shear_prob'], help='Specify the probability to decide how likely a training image should be sheared. Set to 0 to disable.')
