@@ -55,7 +55,8 @@ def main():
                                                                                                     RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
                                                                                                     ToTensor(mode='training')]))
 
-    dataloader = DataLoader(training_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)
+    train_dataloader = DataLoader(training_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)
+    test_dataloader = DataLoader(testing_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)
 
 
 
@@ -74,7 +75,7 @@ def main():
         epoch_training_loss = []
         epoch_accuracy = []
         i = 0
-        for i, sample in tqdm(enumerate(dataloader)):
+        for i, sample in tqdm(enumerate(train_dataloader)):
 
             batch_x, batch_y = sample['image'].to(t_cfg.DEVICE), sample['label'].to(t_cfg.DEVICE)
 
@@ -108,18 +109,18 @@ def main():
         j = 0
         with torch.no_grad():
 
-            for j, test_sample in tqdm(enumerate(testing_data)):
+            for j, test_sample in tqdm(enumerate(test_dataloader)):
 
                 batch_x, batch_y = test_sample['image'].to(t_cfg.DEVICE), test_sample['label'].to(t_cfg.DEVICE)
 
                 net_output = vgg(batch_x)
 
-                total_loss = loss_criterion(input=net_output, tartget=batch_y)
+                total_loss = loss_criterion(input=net_output, target=batch_y)
 
-                epoch_training_loss.append(total_loss.item())
+                epoch_testing_loss.append(total_loss.item())
 
                 batch_acc = calculate_accuracy(network_output=net_output, target=batch_y)
-                epoch_accuracy.append(batch_acc.cpu().numpy())
+                epoch_testing_accuracy.append(batch_acc.cpu().numpy())
 
             test_accuracy = sum(epoch_testing_accuracy)/(j+1)
             test_loss = sum(epoch_testing_loss)

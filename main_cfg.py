@@ -4,8 +4,8 @@ Argument PARSERs.
 import argparse
 
 DEFAULTS = {
-    'train_dataset_path': '/train_dataset/',
-    'test_dataset_path': '/test_dataset/',
+    'train_dataset_path': './train_dataset/',
+    'test_dataset_path': './test_dataset/',
     'image_exts' : ['jpg', 'png', 'jpeg', 'bmp'],
     'model_path' : '/torch_model/',
     'model_name' : 'vgg16-torch.pth',
@@ -17,11 +17,11 @@ DEFAULTS = {
     'vflip_prob' : 0,
     'noise_prob' : 0.5,
     'rotation_range': 60,
-    'shear_range' : 0.4,
+    'shear_range' : 0.3,
     'noise_mode' : ['gaussian', 'salt', 'pepper', 's&p', 'speckle'],
     'num_workers' : 4,
     'data_shuffle' : True,
-    'batch_size' : 5,
+    'batch_size' : 15,
     'epoch' : 100,
     'learning_rate' : 1e-4,
     'learning_rate_decay' : 0.99,
