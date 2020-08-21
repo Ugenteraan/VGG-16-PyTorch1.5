@@ -4,7 +4,8 @@ Argument PARSERs.
 import argparse
 
 DEFAULTS = {
-    'dataset_path': '/dataset/',
+    'train_dataset_path': '/train_dataset/',
+    'train_dataset_path': '/test_dataset/',
     'image_exts' : ['jpg', 'png', 'jpeg', 'bmp'],
     'model_path' : '/torch_model/',
     'model_name' : 'vgg16-torch.pth',
@@ -32,7 +33,8 @@ PARSER = argparse.ArgumentParser()
 
 
 PARSER.add_argument('--mode', type=str, help='Specify the mode of usage. Either train or eval', required=True)
-PARSER.add_argument('--dataset_path', type=str, default=DEFAULTS['dataset_path'], help='Specify the relative path of the training data folder.')
+PARSER.add_argument('--train_dataset_path', type=str, default=DEFAULTS['train_dataset_path'], help='Specify the relative path of the training data folder.')
+PARSER.add_argument('--test_dataset_path', type=str, default=DEFAULTS['test_dataset_path'], help='Specify the relative path of the testing data folder.')
 PARSER.add_argument('--image_exts', type=list, default=DEFAULTS['image_exts'], help='A list of accepted image extensions.')
 PARSER.add_argument('--model_path', type=str, default=DEFAULTS['model_path'], help='Specify the relative path of the model storing folder.')
 PARSER.add_argument('--model_name', type=str, default=DEFAULTS['model_name'], help='Specify the name of the model file to be loaded.')

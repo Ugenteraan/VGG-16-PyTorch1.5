@@ -39,13 +39,21 @@ def main():
 
     ########################################################## Data Initialization & Loading ##########################################################
     #Initialize the training data class.
-    training_data = LoadDataset(resized_image_size=t_cfg.RESIZED_IMAGE_SIZE, total_images=t_cfg.TOTAL_DATA, classes=t_cfg.CLASSES,
-                                data_list=t_cfg.IMG_LABEL_LIST, transform=transforms.Compose([RandomRotate(angle_range=t_cfg.ROTATION_RANGE, prob=t_cfg.ROTATION_PROB),
-                                                                                            RandomShear(shear_range=t_cfg.SHEAR_RANGE, prob=t_cfg.SHEAR_PROB),
-                                                                                            RandomHorizontalFlip(prob=t_cfg.HFLIP_PROB),
-                                                                                            RandomVerticalFlip(prob=t_cfg.VFLIP_PROB),
-                                                                                            RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
-                                                                                            ToTensor(mode='training')]))
+    training_data = LoadDataset(resized_image_size=t_cfg.RESIZED_IMAGE_SIZE, total_images=t_cfg.TOTAL_TRAIN_DATA, classes=t_cfg.CLASSES,
+                                data_list=t_cfg.TRAIN_IMG_LABEL_LIST, transform=transforms.Compose([RandomRotate(angle_range=t_cfg.ROTATION_RANGE, prob=t_cfg.ROTATION_PROB),
+                                                                                                    RandomShear(shear_range=t_cfg.SHEAR_RANGE, prob=t_cfg.SHEAR_PROB),
+                                                                                                    RandomHorizontalFlip(prob=t_cfg.HFLIP_PROB),
+                                                                                                    RandomVerticalFlip(prob=t_cfg.VFLIP_PROB),
+                                                                                                    RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
+                                                                                                    ToTensor(mode='training')]))
+
+    testing_data = LoadDataset(resized_image_size=t_cfg.RESIZED_IMAGE_SIZE, total_images=t_cfg.TOTAL_TEST_DATA, classes=t_cfg.CLASSES,
+                                data_list=t_cfg.TEST_IMG_LABEL_LIST, transform=transforms.Compose([RandomRotate(angle_range=t_cfg.ROTATION_RANGE, prob=t_cfg.ROTATION_PROB),
+                                                                                                    RandomShear(shear_range=t_cfg.SHEAR_RANGE, prob=t_cfg.SHEAR_PROB),
+                                                                                                    RandomHorizontalFlip(prob=t_cfg.HFLIP_PROB),
+                                                                                                    RandomVerticalFlip(prob=t_cfg.VFLIP_PROB),
+                                                                                                    RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
+                                                                                                    ToTensor(mode='training')]))
 
     dataloader = DataLoader(training_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)
 
@@ -62,6 +70,7 @@ def main():
 
         print("Training for epoch %d has started!"%(epoch_idx+1))
 
+        vgg.train()
         epoch_training_loss = []
         epoch_accuracy = []
         i = 0
@@ -84,7 +93,7 @@ def main():
             epoch_accuracy.append(batch_acc.cpu().numpy())
 
         lr_decay.step() #decay rate update
-        curr_accuracy = sum(epoch_accuracy)/i
+        curr_accuracy = sum(epoch_accuracy)/(i+1)
         curr_loss = sum(epoch_training_loss)
 
         print("The accuracy at epoch %d is %g"%(epoch_idx, curr_accuracy))
@@ -93,18 +102,44 @@ def main():
         entire_accuracy_list.append(curr_accuracy)
         entire_loss_list.append(curr_loss)
 
+        vgg.eval()
+        epoch_testing_accuracy = []
+        epoch_testing_loss = []
+        j = 0
+        with torch.no_grad():
 
-        if curr_accuracy > best_accuracy:
+            for j, test_sample in tqdm(enumerate(testing_data)):
 
-            torch.save(vgg.state_dict(), t_cfg.MODEL_PATH + t_cfg.MODEL_NAME)
-            best_accuracy = curr_accuracy
+                batch_x, batch_y = test_sample['image'].to(t_cfg.DEVICE), test_sample['label'].to(t_cfg.DEVICE)
+
+                net_output = vgg(batch_x)
+
+                total_loss = loss_criterion(input=net_output, tartget=batch_y)
+
+                epoch_training_loss.append(total_loss.item())
+
+                batch_acc = calculate_accuracy(network_output=net_output, target=batch_y)
+                epoch_accuracy.append(batch_acc.cpu().numpy())
+
+            test_accuracy = sum(epoch_testing_accuracy)/(j+1)
+            test_loss = sum(epoch_testing_loss)
+
+            print("The testing accuracy at epoch %d is %g"%(epoch_idx, test_accuracy))
+            print("The testing loss at epoch %d is %g"%(epoch_idx, test_loss))
+
+
+        if test_accuracy > best_accuracy:
+
+            torch.save(vgg, t_cfg.MODEL_PATH + t_cfg.MODEL_NAME)
+            best_accuracy = test_accuracy
             print("Model is saved !")
-
 
     ########################################################## Graphs ##########################################################
     if t_cfg.PLOT_GRAPH:
         plot_graph(t_cfg.EPOCH, "Epoch", "Training Loss", "Training Loss for %d epoch"%(t_cfg.EPOCH), "./loss.png", [entire_loss_list, 'r--', "Loss"])
         plot_graph(t_cfg.EPOCH, "Epoch", "Training Accuracy", "Training Accuracy for %d epoch"%(t_cfg.EPOCH), "./accuracy.png", [entire_accuracy_list, 'b--', "Accuracy"])
+
+
 
 if __name__ == "__main__":
     main()
