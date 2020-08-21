@@ -5,7 +5,7 @@ import argparse
 
 DEFAULTS = {
     'train_dataset_path': '/train_dataset/',
-    'train_dataset_path': '/test_dataset/',
+    'test_dataset_path': '/test_dataset/',
     'image_exts' : ['jpg', 'png', 'jpeg', 'bmp'],
     'model_path' : '/torch_model/',
     'model_name' : 'vgg16-torch.pth',
