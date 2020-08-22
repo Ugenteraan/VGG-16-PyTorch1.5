@@ -45,15 +45,10 @@ def main():
                                                                                                     RandomHorizontalFlip(prob=t_cfg.HFLIP_PROB),
                                                                                                     RandomVerticalFlip(prob=t_cfg.VFLIP_PROB),
                                                                                                     RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
-                                                                                                    ToTensor(mode='training')]))
+                                                                                                    ToTensor(mode=0)]))
 
     testing_data = LoadDataset(resized_image_size=t_cfg.RESIZED_IMAGE_SIZE, total_images=t_cfg.TOTAL_TEST_DATA, classes=t_cfg.CLASSES,
-                                data_list=t_cfg.TEST_IMG_LABEL_LIST, transform=transforms.Compose([RandomRotate(angle_range=t_cfg.ROTATION_RANGE, prob=t_cfg.ROTATION_PROB),
-                                                                                                    RandomShear(shear_range=t_cfg.SHEAR_RANGE, prob=t_cfg.SHEAR_PROB),
-                                                                                                    RandomHorizontalFlip(prob=t_cfg.HFLIP_PROB),
-                                                                                                    RandomVerticalFlip(prob=t_cfg.VFLIP_PROB),
-                                                                                                    RandomNoise(mode=t_cfg.NOISE_MODE, prob=t_cfg.NOISE_PROB),
-                                                                                                    ToTensor(mode='training')]))
+                                data_list=t_cfg.TEST_IMG_LABEL_LIST, transform=transforms.Compose([ToTensor(mode=0)]))
 
     train_dataloader = DataLoader(training_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)
     test_dataloader = DataLoader(testing_data, batch_size=t_cfg.BATCH_SIZE, shuffle=t_cfg.DATA_SHUFFLE, num_workers=t_cfg.NUM_WORKERS)

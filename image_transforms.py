@@ -190,7 +190,7 @@ class ToTensor:
     Convert the numpy image to a Tensor.
     '''
 
-    def __init__(self, mode='training'):
+    def __init__(self, mode=0):
         '''
         Initialize parameters.
         '''
@@ -199,7 +199,7 @@ class ToTensor:
 
     def __call__(self, sample):
         '''
-        Conversion to Tensor. If the conversion is for training data, labels will be included as well. Else, only the image will be returned as a tensor.
+        Conversion to Tensor. If the conversion is in mode 0, labels will be included as well. Else, only the image will be returned as a tensor.
         '''
 
         sample['image'] = sample['image'].transpose((2, 0, 1)) #pytorch requires the channel to be in the 1st dimension of the tensor.
